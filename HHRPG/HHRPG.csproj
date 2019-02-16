@@ -58,16 +58,16 @@
     <Compile Include="Player.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\Player\Drifter Down.png">
+    <Content Include="Content\Player\DrifterDown.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Player\Drifter Left.png">
+    <Content Include="Content\Player\DrifterLeft.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Player\Drifter Right.png">
+    <Content Include="Content\Player\DrifterRight.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Player\Drifter Up.png">
+    <Content Include="Content\Player\DrifterUp.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

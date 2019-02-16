@@ -6,14 +6,17 @@ namespace HHRPG
 {
     public class Game : Engine
     { 
+        private Level level = new Level();
+
         public Game()
-            : base(480, 270, "HHRPG", 4.0f, false)
+            : base(480, 270, "HHRPG", 2.0f, false)
         {
         }
 
         protected override void Initialize()
         {
             base.Initialize();
+            level.LoadContent();
         }
 
         protected override void LoadContent()
@@ -24,11 +27,13 @@ namespace HHRPG
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            level.Update();
         }
 
         protected override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
+            level.Draw();
         }
     }
 

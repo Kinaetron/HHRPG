@@ -1,12 +1,21 @@
-﻿using PolyOne.Scenes;
+﻿using Microsoft.Xna.Framework;
+using PolyOne.Engine;
+using PolyOne.Scenes;
+using PolyOne.Utility;
 
 namespace HHRPG
 {
     public class Level : Scene
     {
+        private Player player;
+
         public override void LoadContent()
         {
             base.LoadContent();
+
+            player = new Player(new Vector2(200, 200));
+            this.Add(player);
+            player.Added(this);
         }
 
         public override void UnloadContent()
@@ -21,7 +30,9 @@ namespace HHRPG
 
         public override void Draw()
         {
+            Engine.Begin(Resolution.GetScaleMatrix);
             base.Draw();
+            Engine.End();
         }
     }
 }
