@@ -5,6 +5,12 @@ using PolyOne.Utility;
 
 namespace HHRPG
 {
+    public enum GameTags
+    {
+        Player = 1,
+        Solid = 2
+    }
+
     public class Level : Scene
     {
         private Player player;
@@ -30,7 +36,7 @@ namespace HHRPG
 
         public override void Draw()
         {
-            Engine.Begin(Resolution.GetScaleMatrix);
+            Engine.Begin(player.Camera.TransformMatrix);
             base.Draw();
             Engine.End();
         }

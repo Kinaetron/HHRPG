@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 
 using PolyOne;
 using PolyOne.Animation;
+using PolyOne.Collision;
 using PolyOne.Engine;
 using PolyOne.Input;
 
@@ -23,9 +24,13 @@ namespace HHRPG
 
         private AnimationPlayer player;
 
+        public PlayerCamera Camera = new PlayerCamera();
+
         public Player(Vector2 position)
             :base(position)
         {
+            this.Tag((int)GameTags.Player);
+            this.Collider = new Hitbox((float)32.0f, (float)32.0f);
             this.Visible = true;
 
             player = new AnimationPlayer();
@@ -43,6 +48,8 @@ namespace HHRPG
 
 
             player.PlayAnimation(downAnimationData);
+
+            Camera.CameraTrap = new Rectangle((int)this.Right, (int)this.Bottom - 64, 64, 64);
         }
 
         public override void Update()
@@ -74,6 +81,7 @@ namespace HHRPG
             }
 
             player.Update();
+            Camera.LockToTarget(this.Rectangle, Engine.VirtualWidth, Engine.VirtualHeight);
         }
 
         public override void Draw()
