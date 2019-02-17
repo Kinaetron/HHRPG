@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -50,6 +50,11 @@ namespace HHRPG
         private const float runAccel = 1.0f;
         private const float turnMul = 0.75f;
         private const float normMaxSpeed = 2.0f;
+        private List<Keys> keyList = new List<Keys>(new Keys[] { Keys.W, Keys.A, Keys.S, Keys.D, Keys.Up,
+                                                                 Keys.Down, Keys.Left, Keys.Right });
+
+        private bool controllerMode;
+        private bool keyboardMode;
 
         private Vector2 velocity;
 
@@ -97,6 +102,7 @@ namespace HHRPG
         {
             base.Update();
 
+            Input();
             Movement();
             Animation();
 
@@ -105,37 +111,109 @@ namespace HHRPG
             Camera.ClampToArea((int)level.Tile.MapWidthInPixels - Engine.VirtualWidth, (int)level.Tile.MapHeightInPixels - Engine.VirtualHeight);
         }
 
+        private void InputMode()
+        {
+            foreach (Keys key in keyList)
+            {
+                if (PolyInput.Keyboard.Check(key) == true)
+                {
+                    controllerMode = false;
+                    keyboardMode = true;
+                }
+            }
+            if (PolyInput.GamePads[0].ButtonCheck() == true)
+            {
+                controllerMode = true;
+                keyboardMode = false;
+            }
+
+            if (controllerMode == false && keyboardMode == false) {
+                keyboardMode = true;
+            }
+        }
+
+        private void Input()
+        {
+            InputMode();
+
+            if (controllerMode == true)
+            {
+                if (PolyInput.GamePads[0].LeftStickHorizontal(0.3f) > 0.4f ||
+                    PolyInput.GamePads[0].DPadRightCheck == true)
+                {
+                    horizonal = Horizonal.Right;
+                }
+                else if (PolyInput.GamePads[0].LeftStickHorizontal(0.3f) < -0.4f ||
+                         PolyInput.GamePads[0].DPadLeftCheck == true)
+                {
+                    horizonal = Horizonal.Left;
+                }
+                else {
+                    horizonal = Horizonal.None;
+                }
+
+                if (PolyInput.GamePads[0].LeftStickVertical(0.3f) > 0.4f ||
+                    PolyInput.GamePads[0].DPadUpCheck == true) {
+                    vertical = Vertical.Up;
+                }
+                else if (PolyInput.GamePads[0].LeftStickVertical(0.3f) < -0.4f ||
+                         PolyInput.GamePads[0].DPadDownCheck == true) {
+                    vertical = Vertical.Down;
+                }
+                else {
+                    vertical = Vertical.None;
+                }
+            }
+            else if (keyboardMode == true)
+            {
+                if (PolyInput.Keyboard.Check(Keys.Right) ||
+                    PolyInput.Keyboard.Check(Keys.D))
+                {
+                    horizonal = Horizonal.Right;
+                }
+                else if (PolyInput.Keyboard.Check(Keys.Left) ||
+                         PolyInput.Keyboard.Check(Keys.A))
+                {
+                    horizonal = Horizonal.Left;
+                }
+                else {
+                    horizonal = Horizonal.None;
+                }
+
+                if (PolyInput.Keyboard.Check(Keys.Up) ||
+                    PolyInput.Keyboard.Check(Keys.W))
+                {
+                    vertical = Vertical.Up;
+                }
+                else if (PolyInput.Keyboard.Check(Keys.Down) ||
+                         PolyInput.Keyboard.Check(Keys.S)) {
+                    vertical = Vertical.Down;
+                }
+                else {
+                    vertical = Vertical.None;
+                }
+            }
+        }
+
         private void Movement()
         {
-            if (PolyInput.Keyboard.Check(Keys.W) || PolyInput.Keyboard.Check(Keys.Up))
-            {
-                vertical = Vertical.Up;
+            if (vertical == Vertical.Up) {
                 velocity.Y -= runAccel;
             }
-            else if (PolyInput.Keyboard.Check(Keys.S) || PolyInput.Keyboard.Check(Keys.Down))
-            {
-                vertical = Vertical.Down;
+            else if (vertical == Vertical.Down) {
                 velocity.Y += runAccel;
             }
-            else
-            {
-                vertical = Vertical.None;
+            else {
                 velocity.Y = 0;
             }
 
-            if (PolyInput.Keyboard.Check(Keys.A) || PolyInput.Keyboard.Check(Keys.Left))
-            {
-                horizonal = Horizonal.Left;
+            if (horizonal == Horizonal.Left) {
                 velocity.X -= runAccel;
             }
-            else if (PolyInput.Keyboard.Check(Keys.D) || PolyInput.Keyboard.Check(Keys.Right))
-            {
-                horizonal = Horizonal.Right;
+            else if (horizonal == Horizonal.Right) {
                 velocity.X += runAccel;
             }
-            else
-            {
-                horizonal = Horizonal.None;
+            else {
                 velocity.X = 0;
             }
 
