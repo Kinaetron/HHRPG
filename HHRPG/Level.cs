@@ -1,7 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using PolyOne.Engine;
+﻿using PolyOne.Engine;
+using PolyOne.LevelProcessor;
 using PolyOne.Scenes;
-using PolyOne.Utility;
 
 namespace HHRPG
 {
@@ -14,12 +13,26 @@ namespace HHRPG
     public class Level : Scene
     {
         private Player player;
+        private LevelData levelData;
+
+        private LevelTilesSolid tiles;
+        private bool[,] collisionInfo;
+        public LevelTiler Tile { get; private set; }
 
         public override void LoadContent()
         {
             base.LoadContent();
 
-            player = new Player(new Vector2(200, 200));
+            Tile = new LevelTiler();
+
+            levelData = LevelData.Load("Content/testMap.json");
+            Tile.LoadContent(levelData);
+
+            collisionInfo = LevelTiler.TileConverison(Tile.CollisionLayer, 2);
+            tiles = new LevelTilesSolid(collisionInfo);
+            this.Add(tiles);
+
+            player = new Player(Tile.PlayerPosition[0]);
             this.Add(player);
             player.Added(this);
         }
@@ -37,6 +50,8 @@ namespace HHRPG
         public override void Draw()
         {
             Engine.Begin(player.Camera.TransformMatrix);
+            Tile.DrawImageBackground();
+            Tile.DrawBackground();
             base.Draw();
             Engine.End();
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 
 using PolyOne.Engine;
+using PolyOne.Utility;
 
 namespace HHRPG
 {
@@ -16,6 +17,7 @@ namespace HHRPG
         protected override void Initialize()
         {
             base.Initialize();
+            TileInformation.TileDiemensions(16, 16);
             level.LoadContent();
         }
 
