@@ -13,6 +13,20 @@ using PolyOne.Scenes;
 
 namespace HHRPG
 {
+    public enum Horizonal
+    {
+        None,
+        Left, 
+        Right
+    }
+
+    public enum Vertical
+    {
+        None,
+        Up, 
+        Down
+    }
+
     public class Player : Entity
     {
         private Level level;
@@ -39,6 +53,9 @@ namespace HHRPG
 
         private Vector2 velocity;
 
+        private Vertical vertical;
+        private Horizonal horizonal;
+
         public Player(Vector2 position)
             :base(position)
         {
@@ -59,6 +76,8 @@ namespace HHRPG
             leftAnimationData = new AnimationData(leftTexture, 60, 32, true);
             rightAnimationData = new AnimationData(rightTexture, 60, 32, true);
 
+            vertical = Vertical.None;
+            horizonal = Horizonal.None;
 
             player.PlayAnimation(downAnimationData);
 
@@ -78,40 +97,81 @@ namespace HHRPG
         {
             base.Update();
 
-            if(PolyInput.Keyboard.Check(Keys.W) || PolyInput.Keyboard.Check(Keys.Up))
-            {
-                player.PlayAnimation(upAnimationData);
-                velocity.Y -= runAccel;
-            }
-            else if(PolyInput.Keyboard.Check(Keys.S) || PolyInput.Keyboard.Check(Keys.Down))
-            {
-                player.PlayAnimation(downAnimationData);
-                velocity.Y += runAccel;
-            }
-            else if(PolyInput.Keyboard.Check(Keys.A) || PolyInput.Keyboard.Check(Keys.Left))
-            {
-                player.PlayAnimation(leftAnimationData);
-                velocity.X -= runAccel;
-            }
-            else if(PolyInput.Keyboard.Check(Keys.D) || PolyInput.Keyboard.Check(Keys.Right))
-            {
-                player.PlayAnimation(rightAnimationData);
-                velocity.X += runAccel;
-            }
-            else
-            {
-                velocity = Vector2.Zero;
-            }
+            Movement();
+            Animation();
 
             player.Update();
             Camera.LockToTarget(this.Rectangle, Engine.VirtualWidth, Engine.VirtualHeight);
             Camera.ClampToArea((int)level.Tile.MapWidthInPixels - Engine.VirtualWidth, (int)level.Tile.MapHeightInPixels - Engine.VirtualHeight);
+        }
+
+        private void Movement()
+        {
+            if (PolyInput.Keyboard.Check(Keys.W) || PolyInput.Keyboard.Check(Keys.Up))
+            {
+                vertical = Vertical.Up;
+                velocity.Y -= runAccel;
+            }
+            else if (PolyInput.Keyboard.Check(Keys.S) || PolyInput.Keyboard.Check(Keys.Down))
+            {
+                vertical = Vertical.Down;
+                velocity.Y += runAccel;
+            }
+            else
+            {
+                vertical = Vertical.None;
+                velocity.Y = 0;
+            }
+
+            if (PolyInput.Keyboard.Check(Keys.A) || PolyInput.Keyboard.Check(Keys.Left))
+            {
+                horizonal = Horizonal.Left;
+                velocity.X -= runAccel;
+            }
+            else if (PolyInput.Keyboard.Check(Keys.D) || PolyInput.Keyboard.Check(Keys.Right))
+            {
+                horizonal = Horizonal.Right;
+                velocity.X += runAccel;
+            }
+            else
+            {
+                horizonal = Horizonal.None;
+                velocity.X = 0;
+            }
 
             velocity.X = MathHelper.Clamp(velocity.X, -normMaxSpeed, normMaxSpeed);
             MovementHorizontal(velocity.X);
 
             velocity.Y = MathHelper.Clamp(velocity.Y, -normMaxSpeed, normMaxSpeed);
             MovementVerical(velocity.Y);
+        }
+
+        private void Animation()
+        {
+            if(vertical == Vertical.Up && horizonal == Horizonal.Left) {
+                player.PlayAnimation(upAnimationData);
+            }
+            else if(vertical == Vertical.Up && horizonal == Horizonal.Right) {
+                player.PlayAnimation(upAnimationData);
+            }
+            else if(vertical == Vertical.Down && horizonal == Horizonal.Left) {
+                player.PlayAnimation(downAnimationData);
+            }
+            else if (vertical == Vertical.Down && horizonal == Horizonal.Right) {
+                player.PlayAnimation(downAnimationData);
+            }
+            else if(vertical == Vertical.Up) {
+                player.PlayAnimation(upAnimationData);
+            }
+            else if (vertical == Vertical.Down) {
+                player.PlayAnimation(downAnimationData);
+            }
+            else if (horizonal == Horizonal.Left) {
+                player.PlayAnimation(leftAnimationData);
+            }
+            else if (horizonal == Horizonal.Right) {
+                player.PlayAnimation(rightAnimationData);
+            }
         }
 
         private void MovementHorizontal(float amount)
